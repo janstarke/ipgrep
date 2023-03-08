@@ -2,7 +2,33 @@
 name = "ipgrep"
 version = "0.1.0"
 edition = "2021"
+authors = ["Jan Starke <jan.starke@posteo.de>"]
+license = "GPL-3.0"
+description = "search for IP addresses in text files"
+repository = "https://github.com/janstarke/ipgrep"
 
+[features]
+default = ["cli"]
+cli = ["ipgrep"]
+ipgrep = ["clap", "clap-verbosity-flag"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "ipgrep"
+path = "src/main.rs"
+required-features = ["ipgrep"]
+
+[lib]
+name = "ipgrep"
+path = "src/lib.rs"
+
 [dependencies]
+log = {version = "0.4", features = [ "release_max_level_info" ]}
+simplelog = {version="0.12"}
+winstructs = "0.3.0"
+anyhow = "1"
+clap = {version="4", optional=true, features=["wrap_help"]}
+clap-verbosity-flag = {version="2.0.0", optional=true}
+regex = "1"
+colored = "2"
+lazy-regex = "2.3.1"
