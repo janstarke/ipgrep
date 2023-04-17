@@ -17,8 +17,6 @@ pub fn format_ipv4(
         r"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b"
     );
 
-    let mut display_this_line = false;
-
     if !ipv4_regex.is_match(line) {
         return None;
     }
@@ -30,12 +28,16 @@ pub fn format_ipv4(
     let mut result = String::new();
     let mut last_end = 0;
 
+    // if no specific includes are specified, then this line
+    // shall be displayed if there is any ip address (unless this is to be excluded)
+    let mut display_this_line = includes.is_empty();
+
     for m in ipv4_regex.find_iter(line) {
         // Sometimes there are values like OIDs, which look like IPv4 addresses.
         // We can detect those by doing a look-ahead resp. look-behind. But because
         // are not supported by the regex create, we do this by hand
         if m.start() > 0 && line.as_bytes()[m.start() - 1] == b'.'
-            || m.end() < line.len() - 1 && line.as_bytes()[m.end() + 1] == b'.'
+            || m.end() < line.len() - 1 && line.as_bytes()[m.end()] == b'.'
         {
             result.push_str(&line[last_end..m.start()]);
             result.push_str(m.as_str());
